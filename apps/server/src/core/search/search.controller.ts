@@ -48,11 +48,21 @@ export class SearchController {
     throw new NotImplementedException();
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('suggest')
   async searchSuggestions(
     @Body() dto: SearchSuggestionDTO,
+    @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    return this.searchService.searchSuggestions(dto, workspace.id);
+    if (dto.spaceId) {
+      const ability = await this.spaceAbility.createForUser(user, dto.spaceId);
+
+      if (ability.cannot(SpaceCaslAction.Read, SpaceCaslSubject.Page)) {
+        throw new ForbiddenException();
+      }
+    }
+
+    return this.searchService.searchSuggestions(dto, user.id, workspace.id);
   }
 }
