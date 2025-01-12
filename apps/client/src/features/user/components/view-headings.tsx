@@ -6,46 +6,43 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IUser } from "../types/user.types";
 
-export default function PageWidthPref() {
+export default function ViewHeadingsPref() {
   const { t } = useTranslation();
 
   return (
     <Group justify="space-between" wrap="nowrap" gap="xl">
       <div>
-        <Text size="md">{t("Full page width")}</Text>
+        <Text size="md">{t("View headings")}</Text>
         <Text size="sm" c="dimmed">
-          {t("Choose your preferred page width.")}
+          {t("Show article title menu.")}
         </Text>
       </div>
 
-      <PageWidthToggle />
+      <ViewHeadingsToggle />
     </Group>
   );
 }
 
-interface PageWidthToggleProps {
+interface ViewHeadingsToggleProps {
   size?: MantineSize;
   label?: string;
 }
 
-const getPreferencesOptions = (fullPageWidth: boolean, viewHeadings: boolean): Partial<IUser> => {
+const getPreferencesOptions = (viewHeadings: boolean, fullPageWidth: boolean): Partial<IUser> => {
   const obj: Partial<IUser> = {
-    viewHeadings
+    fullPageWidth
   };
-  if (fullPageWidth) {
-    obj.viewHeadings = false;
+  if (viewHeadings) {
+    obj.fullPageWidth = false;
   }
-  obj.fullPageWidth = fullPageWidth;
+  obj.viewHeadings = viewHeadings;
   return obj;
 }
 
-
-export function PageWidthToggle({ size, label }: PageWidthToggleProps) {
+export function ViewHeadingsToggle({ size, label }: ViewHeadingsToggleProps) {
   const { t } = useTranslation();
   const [user, setUser] = useAtom(userAtom);
-  const [checked, setChecked] = useState(
-    user.settings?.preferences?.fullPageWidth,
-  );
+  const [checked, setChecked] = useState(user.settings?.preferences?.viewHeadings);
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.checked;
@@ -63,7 +60,7 @@ export function PageWidthToggle({ size, label }: PageWidthToggleProps) {
       labelPosition="left"
       defaultChecked={checked}
       onChange={handleChange}
-      aria-label={t("Toggle full page width")}
+      aria-label={t("Toggle view headings menu")}
     />
   );
 }
